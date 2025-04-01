@@ -1,11 +1,5 @@
-# 🛡️ AI-Powered Phishing Email Detector
+## 🖼️ Live Demo UI
 
-This is a simple Python-based phishing email detector built for educational and cybersecurity awareness purposes. It flags suspicious emails based on keyword analysis and link patterns.
+Here’s a preview of the Streamlit web app:
 
----
-
-## 🚀 How to Run
-
-1. Make sure you're in the virtual environment:
-```bash
-venv\Scripts\activate
+![AI Phishing Detector UI](demo_ui.png)
