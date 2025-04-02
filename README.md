@@ -1,12 +1,31 @@
-## 🖼️ Live Demo UI
+# 🛡️ AI Phishing Email Detector
 
-Here’s a preview of the Streamlit web app:
+A smart and simple tool to detect phishing threats in emails using keywords, ML models, and a sleek web interface.
 
-![AI Phishing Detector UI](demo_ui.png)
+---
 
+## 🚀 Features
 
-## 🖼️ Streamlit Demo UI
+- 🔍 Detect phishing attempts from pasted text or uploaded `.txt` / `.eml` files
+- 📊 Real-time keyword + ML detection
+- 💻 Streamlit-based browser UI
+- 💾 Log phishing keywords and events
+- 🎯 Minimalist, fast, professional
 
-Here’s what the web-based phishing detector looks like:
+---
 
-![Streamlit Demo](ui_demo.png)
+## 🖥️ Screenshot
+
+![UI Screenshot](demo_ui.png)
+
+---
+
+## ⚙️ How to Run Locally
+
+```bash
+git clone https://github.com/Robair26/ai-phishing-detector.git
+cd ai-phishing-detector
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+streamlit run app.py
