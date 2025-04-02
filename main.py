@@ -1,29 +1,29 @@
+import sys
 import logging
 from detector import is_phishing
-from datetime import datetime
+from extract import extract_email_body
 
-# 🎨 Color codes for console
-RED = "\033[91m"
-GREEN = "\033[92m"
-YELLOW = "\033[93m"
-RESET = "\033[0m"
+logging.basicConfig(filename='log.txt', level=logging.INFO)
 
-# 🖥️ CLI Banner
-print(f"""{YELLOW}
-===========================================
-     🛡️  AI PHISHING DETECTOR (v1.0)      
-===========================================
-{RESET}""")
+print("="*43)
+print("     🛡️  AI PHISHING DETECTOR (v1.0)")
+print("="*43)
 
-# 📨 Get email input
-email = input("📩 Enter the email content to analyze:\n> ")
+if len(sys.argv) > 1:
+    email_file = sys.argv[1]
+    logging.info(f"📂 File provided: {email_file}")
+    try:
+        content = extract_email_body(email_file)
+        print(f"\n📄 Extracted email content:\n{content}\n")
+    except Exception as e:
+        print("❌ Failed to extract email content:", str(e))
+        sys.exit(1)
+else:
+    content = input("\n📩 Enter the email content to analyze:\n> ")
+
 logging.info("Received email content.")
 
-# 🤖 Run detection
-result = is_phishing(email)
-
-# 🎯 Display result with color
-if result:
-    print(f"{RED}\n⚠️ This email is likely a PHISHING attempt.\n{RESET}")
+if is_phishing(content):
+    print("\n⚠️ This email is likely a PHISHING attempt.")
 else:
-    print(f"{GREEN}\n✅ This email appears to be SAFE.\n{RESET}")
+    print("\n✅ This email seems safe.")

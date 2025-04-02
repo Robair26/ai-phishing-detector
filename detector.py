@@ -1,3 +1,5 @@
+import extract_msg
+import os
 import logging
 import re
 
@@ -31,5 +33,18 @@ def is_phishing(text):
         for link in links_found:
             logging.info(f"🔗 Suspicious link detected: {link}")
         is_flagged = True
+def extract_email_content_from_file(file_path):
+    if not os.path.exists(file_path):
+        print(f"❌ File not found: {file_path}")
+        return ""
+
+    try:
+        msg = extract_msg.Message(file_path)
+        msg_message = msg.body or ""
+        return msg_message.strip()
+    except Exception as e:
+        print(f"❌ Failed to extract email content: {e}")
+        return ""
+
 
     return is_flagged
