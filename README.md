@@ -1,9 +1,10 @@
 # 🛡️ AI Phishing Email Detector
 
+# 🛡️ AI Phishing Email Detector
+
+[![Streamlit App](https://ai-phishing-detector-8wtkg4vh45skksrablkq8w.streamlit.app/
+
 A smart and simple tool to detect phishing threats in emails using keywords, ML models, and a sleek web interface.
-
----
-
 ## 🚀 Features
 
 - 🔍 Detect phishing attempts from pasted text or uploaded `.txt` / `.eml` files
