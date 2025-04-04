@@ -12,6 +12,8 @@ A smart and simple tool to detect phishing threats in emails using keywords, ML 
 - 💻 Streamlit-based browser UI
 - 💾 Log phishing keywords and events
 - 🎯 Minimalist, fast, professional
+🔄 **New in v1.1:** Now includes Light/Dark mode and upload UI!
+
 
 ---
 
