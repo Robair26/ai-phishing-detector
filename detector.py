@@ -1,50 +1,24 @@
-import extract_msg
-import os
-import logging
 import re
+import logging
 
-# 🎨 Set up logging format
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-)
-
-# 🎯 Keywords and pattern to look for
 PHISHING_KEYWORDS = [
-    "password", "verify", "urgent", "login", "click here", "account", "update",
-    "suspended", "limited", "credit card", "ssn", "social security", "bank", "confirm"
+    "verify", "suspend", "login", "update", "account", "click here", "password",
+    "urgent", "immediately", "limited time", "alert", "confirm"
 ]
 
-SUSPICIOUS_LINK_PATTERN = r'https?:\/\/[^ ]+'
+SUSPICIOUS_LINK_PATTERN = r'https?:\/\/[^ ]*'
 
 def is_phishing(text):
     text_lower = text.lower()
-    is_flagged = False
+    found_keywords = []
 
-    # 🔍 Keyword matching
     for keyword in PHISHING_KEYWORDS:
         if keyword in text_lower:
             logging.info(f"⚠️  Keyword matched: {keyword}")
-            is_flagged = True
+            found_keywords.append(keyword)
 
-    # 🔗 Suspicious link detection
-    links_found = re.findall(SUSPICIOUS_LINK_PATTERN, text)
-    if links_found:
-        for link in links_found:
-            logging.info(f"🔗 Suspicious link detected: {link}")
-        is_flagged = True
-def extract_email_content_from_file(file_path):
-    if not os.path.exists(file_path):
-        print(f"❌ File not found: {file_path}")
-        return ""
+    if re.search(SUSPICIOUS_LINK_PATTERN, text_lower):
+        logging.info("⚠️  Suspicious link found.")
+        found_keywords.append("link")
 
-    try:
-        msg = extract_msg.Message(file_path)
-        msg_message = msg.body or ""
-        return msg_message.strip()
-    except Exception as e:
-        print(f"❌ Failed to extract email content: {e}")
-        return ""
-
-
-    return is_flagged
+    return bool(found_keywords)

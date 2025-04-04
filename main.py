@@ -1,29 +1,35 @@
-import sys
 import logging
 from detector import is_phishing
-from extract import extract_email_body
+from colorama import Fore, Style, init
+import sys
 
-logging.basicConfig(filename='log.txt', level=logging.INFO)
+# Initialize colorama
+init(autoreset=True)
 
-print("="*43)
-print("     🛡️  AI PHISHING DETECTOR (v1.0)")
-print("="*43)
+# Logging setup
+logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-if len(sys.argv) > 1:
-    email_file = sys.argv[1]
-    logging.info(f"📂 File provided: {email_file}")
-    try:
-        content = extract_email_body(email_file)
-        print(f"\n📄 Extracted email content:\n{content}\n")
-    except Exception as e:
-        print("❌ Failed to extract email content:", str(e))
-        sys.exit(1)
-else:
-    content = input("\n📩 Enter the email content to analyze:\n> ")
+def display_banner():
+    print(Fore.CYAN + Style.BRIGHT + "=" * 43)
+    print(Fore.MAGENTA + Style.BRIGHT + "     🛡️  AI PHISHING DETECTOR (v1.0)")
+    print(Fore.CYAN + Style.BRIGHT + "=" * 43)
 
-logging.info("Received email content.")
+def main():
+    display_banner()
 
-if is_phishing(content):
-    print("\n⚠️ This email is likely a PHISHING attempt.")
-else:
-    print("\n✅ This email seems safe.")
+    if len(sys.argv) > 1:
+        email_input = ' '.join(sys.argv[1:])
+        print(Fore.YELLOW + f"📂 File provided: {email_input}")
+    else:
+        print(Fore.YELLOW + "\n📩 Enter the email content to analyze:")
+        email_input = input("> ")
+
+    logging.info("Received email content.")
+
+    if is_phishing(email_input):
+        print(Fore.RED + Style.BRIGHT + "\n⚠️ This email is likely a PHISHING attempt.")
+    else:
+        print(Fore.GREEN + Style.BRIGHT + "\n✅ This email appears safe.")
+
+if __name__ == "__main__":
+    main()
