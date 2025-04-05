@@ -37,3 +37,15 @@ python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 streamlit run app.py
+## 📁 Dataset & Model (External)
+
+To keep this repository clean and under GitHub’s file size limits, large training files are hosted externally.
+
+📥 Download the training dataset and ML model here:  
+🔗 [Download from Google Drive](https://drive.google.com/file/d/1urksgoVf9CKn6FbbBu9j0RQX7HC2PaqL/view?usp=sharing)
+
+➡️ After download:
+1. Extract the zip file  
+2. Place the contents inside a `data/` folder within the project directory  
+3. You're good to go! ✅
+
