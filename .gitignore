@@ -1,6 +1,4 @@
-# Ignore large data files
+# Ignore large datasets and models
 cleaned_dataset.csv
-data/
-*.pkl
-__pycache__/
-venv/
+phishing_model.pkl
+dataset_bundle.zip
