@@ -1,32 +1,108 @@
 import streamlit as st
-from detector import is_phishing
+import base64
+import os
+import fitz  # PyMuPDF
+import email
+import olefile
+import extract_msg
 
-st.set_page_config(page_title="AI Phishing Email Detector", page_icon="🛡️")
+# Theme selector
+theme = st.selectbox("🌗 Select Theme", ["Light", "Dark"])
 
-st.markdown("""
-    <h1 style='text-align: center;'>🛡️ AI Phishing Detector</h1>
-    <p style='text-align: center;'>Paste or upload email content to detect phishing threats.</p>
-    <hr>
-""", unsafe_allow_html=True)
+# Apply custom themes
+def set_custom_theme(theme):
+    if theme == "Dark":
+        st.markdown(
+            """
+            <style>
+                body {
+                    background-color: #0e1117;
+                    color: #ffffff;
+                }
+                .stTextInput > div > div > input,
+                .stTextArea > div > textarea {
+                    background-color: #262730;
+                    color: white;
+                }
+                .stButton > button {
+                    background-color: #ff4b4b;
+                    color: white;
+                }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
 
-uploaded_file = st.file_uploader("📎 Upload Email (.txt, .eml, etc.):", type=["txt", "eml"])
+set_custom_theme(theme)
 
-email_text = ""
+# Page title
+st.markdown("## 🛡️ AI Phishing Detector")
+st.markdown("Paste or upload email content to detect phishing threats.")
 
-if uploaded_file is not None:
-    email_text = uploaded_file.read().decode("utf-8", errors="ignore")
-    st.text_area("📨 Email Content:", value=email_text, height=250)
+# File uploader
+uploaded_file = st.file_uploader(
+    "📎 Upload Email (.txt, .eml, .pdf, etc.):",
+    type=["txt", "eml", "pdf"]
+)
 
-elif st.text_input("Or paste the email subject or message here:"):
-    email_text = st.session_state.get("email_input", "")
-    email_text = st.text_area("📨 Email Content:", value=email_text, height=250)
+# Manual input area (label hidden, warning fixed)
+manual_input = st.text_area("Manual Email Input", label_visibility="collapsed")
 
-if st.button("🚀 Analyze"):
-    if not email_text.strip():
-        st.warning("⚠️ Please provide email content.")
-    else:
-        st.info("Analyzing...")
-        if is_phishing(email_text):
-            st.error("⚠️ This email is likely a PHISHING attempt.")
+# Phishing keyword list
+PHISHING_KEYWORDS = [
+    "verify", "click here", "urgent", "password", "login", "account", "bank",
+    "social security", "reset", "update", "confirm", "credentials", "alert",
+    "security", "suspended"
+]
+
+def extract_text_from_pdf(file):
+    text = ""
+    try:
+        with fitz.open(stream=file.read(), filetype="pdf") as doc:
+            for page in doc:
+                text += page.get_text()
+    except Exception as e:
+        st.error(f"Error reading PDF: {e}")
+    return text
+
+def extract_text_from_eml(file):
+    try:
+        msg = email.message_from_bytes(file.read())
+        if msg.is_multipart():
+            return ''.join(part.get_payload(decode=True).decode(errors="ignore")
+                           for part in msg.walk()
+                           if part.get_content_type() == "text/plain")
         else:
-            st.success("✅ This email appears safe.")
+            return msg.get_payload(decode=True).decode(errors="ignore")
+    except Exception as e:
+        st.error(f"Error reading EML: {e}")
+        return ""
+
+def detect_phishing(content):
+    matches = [kw for kw in PHISHING_KEYWORDS if kw.lower() in content.lower()]
+    if matches:
+        st.error(f"⚠️ This email is likely a PHISHING attempt.\n\n**Matched keywords:** {', '.join(matches)}")
+    else:
+        st.success("✅ This email appears safe.")
+
+# Analyze button
+if st.button("🚀 Analyze"):
+    text = ""
+
+    if uploaded_file:
+        ext = os.path.splitext(uploaded_file.name)[-1].lower()
+        if ext == ".txt":
+            text = uploaded_file.read().decode(errors="ignore")
+        elif ext == ".eml":
+            text = extract_text_from_eml(uploaded_file)
+        elif ext == ".pdf":
+            text = extract_text_from_pdf(uploaded_file)
+        else:
+            st.error("Unsupported file format.")
+    elif manual_input:
+        text = manual_input
+
+    if text:
+        detect_phishing(text)
+    else:
+        st.warning("⚠️ Please provide email content to analyze.")
