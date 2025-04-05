@@ -1,2 +1,6 @@
+# Ignore large data files
 cleaned_dataset.csv
-data/phishing_email.csv
+data/
+*.pkl
+__pycache__/
+venv/
