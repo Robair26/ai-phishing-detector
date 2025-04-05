@@ -1,4 +1,2 @@
-__pycache__/
-venv/
-*.pkl
-log.txt
+cleaned_dataset.csv
+data/phishing_email.csv
