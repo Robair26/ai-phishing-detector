@@ -22,6 +22,11 @@ A smart and simple tool to detect phishing threats in emails using keywords, ML 
 ![UI Screenshot](demo_ui.png)
 
 ---
+## 🖼️ PDF Upload Support
+
+You can now upload `.pdf` files to analyze for phishing threats — in addition to `.txt` and `.eml`.
+
+![PDF Upload Demo](demo_pdf.png)
 
 ## ⚙️ How to Run Locally
 
