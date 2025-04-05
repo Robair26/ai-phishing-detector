@@ -1,35 +1,47 @@
-import logging
-from detector import is_phishing
-from colorama import Fore, Style, init
 import sys
+import logging
+from detector import (
+    is_phishing,
+    extract_text_from_txt,
+    extract_text_from_eml,
+    extract_text_from_msg,
+    extract_text_from_pdf
+)
 
-# Initialize colorama
-init(autoreset=True)
+logging.basicConfig(level=logging.INFO)
 
-# Logging setup
-logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+print("===========================================")
+print("     🛡️  AI PHISHING DETECTOR (v1.0)")
+print("===========================================")
 
-def display_banner():
-    print(Fore.CYAN + Style.BRIGHT + "=" * 43)
-    print(Fore.MAGENTA + Style.BRIGHT + "     🛡️  AI PHISHING DETECTOR (v1.0)")
-    print(Fore.CYAN + Style.BRIGHT + "=" * 43)
+email_content = ""
 
-def main():
-    display_banner()
+# Handle file input
+if len(sys.argv) > 1:
+    file_path = sys.argv[1]
+    logging.info(f"📂 File provided: {file_path}")
 
-    if len(sys.argv) > 1:
-        email_input = ' '.join(sys.argv[1:])
-        print(Fore.YELLOW + f"📂 File provided: {email_input}")
+    if file_path.endswith(".txt"):
+        email_content = extract_text_from_txt(file_path)
+    elif file_path.endswith(".eml"):
+        email_content = extract_text_from_eml(file_path)
+    elif file_path.endswith(".msg"):
+        email_content = extract_text_from_msg(file_path)
+    elif file_path.endswith(".pdf"):
+        email_content = extract_text_from_pdf(file_path)
     else:
-        print(Fore.YELLOW + "\n📩 Enter the email content to analyze:")
-        email_input = input("> ")
+        logging.error("❌ Unsupported file format.")
+        sys.exit(1)
 
-    logging.info("Received email content.")
+    if not email_content:
+        print("❌ Failed to extract content from the file.")
+        sys.exit(1)
 
-    if is_phishing(email_input):
-        print(Fore.RED + Style.BRIGHT + "\n⚠️ This email is likely a PHISHING attempt.")
-    else:
-        print(Fore.GREEN + Style.BRIGHT + "\n✅ This email appears safe.")
+else:
+    email_content = input("\n📩 Enter the email content to analyze:\n> ")
 
-if __name__ == "__main__":
-    main()
+# Detect phishing
+if is_phishing(email_content):
+    print("\n⚠️ This email is likely a PHISHING attempt.")
+else:
+    print("\n✅ This email appears safe.")
