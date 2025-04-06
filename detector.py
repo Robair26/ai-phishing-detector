@@ -113,3 +113,11 @@ def translate_to_english(text):
     except Exception as e:
         logging.error(f"Translation failed: {e}")
         return text
+import datetime
+
+def log_threat_result(email_content, is_phishing, file_source="Manual Input"):
+    with open("log.txt", "a", encoding="utf-8") as log_file:
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        status = "PHISHING" if is_phishing else "SAFE"
+        log_file.write(f"[{timestamp}] [{status}] Source: {file_source}\n")
+        log_file.write(f"Content: {email_content[:200]}...\n\n")  # Log a preview only
