@@ -1,61 +1,75 @@
 import streamlit as st
-import logging
-from detector import is_phishing, extract_text_from_file
-from link_scanner import check_links
+from detector import (
+    is_phishing,
+    extract_text_from_file,
+    extract_urls,
+    translate_to_english
+)
 import os
+import tempfile
 
-# Logging setup
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+# Title and layout
+st.set_page_config(page_title="AI Phishing Detector", layout="centered")
+st.title("🛡️ AI-Powered Phishing Email Detector")
 
-st.set_page_config(page_title="AI Phishing Detector", layout="wide")
-
-# Theme selector
+# Theme toggle
 theme = st.selectbox("🌗 Select Theme", ["Light", "Dark"])
+
 if theme == "Dark":
-    st.markdown(
-        """
+    st.markdown("""
         <style>
             body { background-color: #0e1117; color: white; }
-            .stTextInput > div > div > input, .stTextArea > div > textarea {
-                background-color: #262730; color: white;
+            .stTextInput > div > div > input,
+            .stTextArea > div > textarea {
+                background-color: #262730;
+                color: white;
             }
-            .stButton > button { background-color: #ff4b4b; color: white; }
+            .stButton > button {
+                background-color: #ff4b4b;
+                color: white;
+            }
         </style>
-        """, unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
 
-# Title
-st.title("🛡️ AI Phishing Detector (Multilingual)")
+# Text input
+user_input = st.text_area("📩 Paste email content here", height=200)
 
-# File Upload
-uploaded_file = st.file_uploader("📎 Upload Email (.txt, .eml, .msg, .pdf)", type=["txt", "eml", "msg", "pdf"])
-email_text = ""
+# File upload
+uploaded_file = st.file_uploader("📎 Or upload a .txt, .eml, .msg, or .pdf file", type=["txt", "eml", "msg", "pdf"])
 
-# OR Manual Input
-with st.expander("✍️ Paste Email Text Manually"):
-    email_text = st.text_area("Email Content", height=200)
+email_content = ""
 
-# Combine inputs
-if uploaded_file is not None:
-    # Save temp file
-    path = os.path.join("temp_input", uploaded_file.name)
-    os.makedirs("temp_input", exist_ok=True)
-    with open(path, "wb") as f:
-        f.write(uploaded_file.read())
-    email_text = extract_text_from_file(path)
+if uploaded_file:
+    # Save uploaded file temporarily
+    with tempfile.NamedTemporaryFile(delete=False, suffix=f".{uploaded_file.name.split('.')[-1]}") as tmp:
+        tmp.write(uploaded_file.read())
+        tmp_path = tmp.name
+    email_content = extract_text_from_file(tmp_path)
+    os.remove(tmp_path)
 
-if email_text:
-    st.markdown("---")
-    st.subheader("🔎 Results")
+elif user_input:
+    email_content = user_input
 
-    with st.spinner("Analyzing..."):
-        result = is_phishing(email_text)
-
-        st.write("✅ Email content processed.")
-        if result:
-            st.error("⚠️ This email is likely a **PHISHING** attempt.")
+if st.button("🚨 Analyze Email"):
+    if email_content.strip():
+        st.info("🔍 Analyzing email content...")
+        
+        # Detect language and translate
+        translated_content = translate_to_english(email_content)
+        
+        # Display URLs
+        urls = extract_urls(translated_content)
+        if urls:
+            st.markdown("🔗 **Links found in email:**")
+            for url in urls:
+                st.markdown(f"- {url}")
         else:
-            st.success("✅ This email appears **SAFE**.")
+            st.markdown("✅ No links found in the email.")
 
-else:
-    st.info("📬 Please upload a file or paste some email content.")
+        # Detect phishing
+        if is_phishing(translated_content):
+            st.error("⚠️ This email is likely a **PHISHING attempt**.")
+        else:
+            st.success("✅ This email appears **safe**.")
+    else:
+        st.warning("⚠️ Please paste content or upload a file.")
