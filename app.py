@@ -2,74 +2,69 @@ import streamlit as st
 from detector import (
     is_phishing,
     extract_text_from_file,
+    translate_to_english,
     extract_urls,
-    translate_to_english
+    get_sentiment,
+    detect_social_engineering,
+    analyze_pos_patterns,
+    check_links,
+    log_detection_result,
+    get_domain_reputation
 )
 import os
-import tempfile
 
-# Title and layout
 st.set_page_config(page_title="AI Phishing Detector", layout="centered")
 st.title("🛡️ AI-Powered Phishing Email Detector")
 
-# Theme toggle
-theme = st.selectbox("🌗 Select Theme", ["Light", "Dark"])
+st.markdown("""
+Upload an email file or paste the email content below. This tool will analyze the message for phishing keywords,
+psychological manipulation, suspicious links, and domain reputation.
+""")
 
-if theme == "Dark":
-    st.markdown("""
-        <style>
-            body { background-color: #0e1117; color: white; }
-            .stTextInput > div > div > input,
-            .stTextArea > div > textarea {
-                background-color: #262730;
-                color: white;
-            }
-            .stButton > button {
-                background-color: #ff4b4b;
-                color: white;
-            }
-        </style>
-    """, unsafe_allow_html=True)
+verbose = st.checkbox("🔍 Verbose Output (Logs)")
 
-# Text input
-user_input = st.text_area("📩 Paste email content here", height=200)
+uploaded_file = st.file_uploader("📁 Upload Email File (.txt, .pdf, .eml, .msg)", type=["txt", "pdf", "eml", "msg"])
+manual_input = st.text_area("✍️ Or Paste Email Content", height=200)
 
-# File upload
-uploaded_file = st.file_uploader("📎 Or upload a .txt, .eml, .msg, or .pdf file", type=["txt", "eml", "msg", "pdf"])
-
-email_content = ""
-
-if uploaded_file:
-    # Save uploaded file temporarily
-    with tempfile.NamedTemporaryFile(delete=False, suffix=f".{uploaded_file.name.split('.')[-1]}") as tmp:
-        tmp.write(uploaded_file.read())
-        tmp_path = tmp.name
-    email_content = extract_text_from_file(tmp_path)
-    os.remove(tmp_path)
-
-elif user_input:
-    email_content = user_input
-
-if st.button("🚨 Analyze Email"):
-    if email_content.strip():
-        st.info("🔍 Analyzing email content...")
-        
-        # Detect language and translate
-        translated_content = translate_to_english(email_content)
-        
-        # Display URLs
-        urls = extract_urls(translated_content)
-        if urls:
-            st.markdown("🔗 **Links found in email:**")
-            for url in urls:
-                st.markdown(f"- {url}")
-        else:
-            st.markdown("✅ No links found in the email.")
-
-        # Detect phishing
-        if is_phishing(translated_content):
-            st.error("⚠️ This email is likely a **PHISHING attempt**.")
-        else:
-            st.success("✅ This email appears **safe**.")
+if st.button("🚀 Analyze Email"):
+    if uploaded_file:
+        temp_path = os.path.join("temp", uploaded_file.name)
+        os.makedirs("temp", exist_ok=True)
+        with open(temp_path, "wb") as f:
+            f.write(uploaded_file.read())
+        content = extract_text_from_file(temp_path)
+        os.remove(temp_path)
+    elif manual_input.strip():
+        content = manual_input
     else:
-        st.warning("⚠️ Please paste content or upload a file.")
+        st.warning("Please upload a file or paste email content.")
+        st.stop()
+
+    if verbose:
+        st.info("📜 Original Text:\n" + content)
+
+    translated = translate_to_english(content)
+    if verbose and translated != content:
+        st.info("🌍 Translated to English:\n" + translated)
+
+    sentiment_score = get_sentiment(translated)
+    if verbose:
+        st.info(f"🧠 Sentiment Score: {sentiment_score:.2f}")
+
+    detected = is_phishing(translated)
+
+    urls = extract_urls(translated)
+    if urls:
+        st.write("🔗 URLs Found:")
+        for url in urls:
+            st.write("-", url)
+            domain_rep = get_domain_reputation(url)
+            if verbose:
+                st.info(f"🌐 Domain Reputation for {url}: {domain_rep}")
+
+    if detected:
+        st.error("⚠️ This email is likely a PHISHING attempt.")
+    else:
+        st.success("✅ This email appears safe.")
+
+    log_detection_result(translated, detected)

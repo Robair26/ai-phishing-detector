@@ -5,6 +5,13 @@ import extract_msg  # For .msg files
 from langdetect import detect
 from deep_translator import GoogleTranslator
 from link_scanner import check_links
+from textblob import TextBlob
+import nltk
+import os
+from datetime import datetime
+
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
 
 # Logging setup
 logging.basicConfig(
@@ -27,25 +34,63 @@ URL_SHORTENERS = [
     "bit.ly", "tinyurl", "t.co", "goo.gl", "ow.ly", "buff.ly", "rebrand.ly"
 ]
 
+# Social engineering phrases
+SOCIAL_ENGINEERING_PHRASES = [
+    "just wanted to check in", "can you do me a favor", "urgent but quick",
+    "no need to worry", "you’ll love this opportunity", "you’ve been selected",
+    "this stays between us", "I just need one thing from you", "you’re the only one who can help",
+    "quick task for you", "need your input asap", "we're counting on you", "talk soon", "grab coffee",
+    "hop on a quick call"
+]
+
 def is_phishing(content):
     logging.info("Received email content.")
 
-    # Language Detection
-    try:
-        lang = detect(content)
-        logging.info(f"🌐 Detected language: {lang}")
-        if lang != 'en':
-            content = GoogleTranslator(source=lang, target='en').translate(content)
-            logging.info("🌍 Translated email content to English for analysis.")
-    except Exception as e:
-        logging.warning(f"🌐 Language detection failed: {e}")
+    # Language Detection + Translation
+    content = translate_to_english(content)
 
     detected = False
+    threat_score = 0
+    lower_content = content.lower()
+
+    # Check for phishing keywords
     for keyword in PHISHING_KEYWORDS:
-        if keyword in content.lower():
+        if keyword in lower_content:
             logging.info(f"⚠️  Keyword matched: {keyword}")
+            threat_score += 2
             detected = True
 
+    # Check for social engineering phrases
+    for phrase in SOCIAL_ENGINEERING_PHRASES:
+        if phrase in lower_content:
+            logging.info(f"🧠 Social engineering cue detected: {phrase}")
+            threat_score += 2
+            detected = True
+
+    # Tone scoring
+    try:
+        sentiment = TextBlob(content).sentiment.polarity
+        logging.info(f"🧠 Sentiment polarity: {sentiment:.2f}")
+        if sentiment < -0.3:
+            threat_score += 1
+            detected = True
+    except Exception as e:
+        logging.warning(f"Sentiment analysis failed: {e}")
+
+    # POS pattern matching
+    try:
+        sentences = nltk.sent_tokenize(content)
+        for sentence in sentences:
+            words = nltk.word_tokenize(sentence)
+            tags = nltk.pos_tag(words)
+            if tags and tags[0][1].startswith("VB"):
+                logging.info(f"🧠 POS pattern detected (starts with verb): {sentence}")
+                threat_score += 1
+                detected = True
+    except Exception as e:
+        logging.warning(f"POS tagging failed: {e}")
+
+    # URL scanning
     urls = extract_urls(content)
     if urls:
         logging.info(f"🔍 Found {len(urls)} URL(s). Scanning...")
@@ -53,11 +98,12 @@ def is_phishing(content):
         for url, status in scan_results.items():
             logging.info(f"🔗 {url} — {status}")
             if status == "🚨 Unsafe":
+                threat_score += 3
                 detected = True
     else:
         logging.info("✅ No links found in the email.")
 
-    return detected
+    return detected, min(threat_score, 10)  # Cap the score at 10
 
 def extract_urls(text):
     return re.findall(r"https?://[^\s]+", text.lower())
@@ -113,11 +159,12 @@ def translate_to_english(text):
     except Exception as e:
         logging.error(f"Translation failed: {e}")
         return text
-import datetime
 
-def log_threat_result(email_content, is_phishing, file_source="Manual Input"):
-    with open("log.txt", "a", encoding="utf-8") as log_file:
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        status = "PHISHING" if is_phishing else "SAFE"
-        log_file.write(f"[{timestamp}] [{status}] Source: {file_source}\n")
-        log_file.write(f"Content: {email_content[:200]}...\n\n")  # Log a preview only
+def log_detection_result(content, is_phish, file_name=None):
+    os.makedirs("logs", exist_ok=True)
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    label = "PHISHING" if is_phish else "SAFE"
+    fname = f"logs/detection_log.txt"
+    with open(fname, "a", encoding="utf-8") as f:
+        f.write(f"[{timestamp}] - {file_name or 'Console Input'} ➜ {label}\n")
+        f.write(f"{content}\n{'-'*40}\n")
