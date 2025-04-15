@@ -4,12 +4,8 @@ from detector import (
     extract_text_from_file,
     translate_to_english,
     extract_urls,
-    get_sentiment,
-    detect_social_engineering,
-    analyze_pos_patterns,
     check_links,
-    log_detection_result,
-    get_domain_reputation
+    log_detection_result
 )
 import os
 
@@ -18,7 +14,7 @@ st.title("🛡️ AI-Powered Phishing Email Detector")
 
 st.markdown("""
 Upload an email file or paste the email content below. This tool will analyze the message for phishing keywords,
-psychological manipulation, suspicious links, and domain reputation.
+psychological manipulation, and suspicious links.
 """)
 
 verbose = st.checkbox("🔍 Verbose Output (Logs)")
@@ -47,23 +43,18 @@ if st.button("🚀 Analyze Email"):
     if verbose and translated != content:
         st.info("🌍 Translated to English:\n" + translated)
 
-    sentiment_score = get_sentiment(translated)
-    if verbose:
-        st.info(f"🧠 Sentiment Score: {sentiment_score:.2f}")
-
-    detected = is_phishing(translated)
+    detected, score = is_phishing(translated)
 
     urls = extract_urls(translated)
     if urls:
         st.write("🔗 URLs Found:")
         for url in urls:
             st.write("-", url)
-            domain_rep = get_domain_reputation(url)
-            if verbose:
-                st.info(f"🌐 Domain Reputation for {url}: {domain_rep}")
+        if verbose:
+            st.info(f"Scanned {len(urls)} URL(s).")
 
     if detected:
-        st.error("⚠️ This email is likely a PHISHING attempt.")
+        st.error(f"⚠️ This email is likely a PHISHING attempt. Threat Score: {score}/10")
     else:
         st.success("✅ This email appears safe.")
 
