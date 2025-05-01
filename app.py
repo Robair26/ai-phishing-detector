@@ -11,15 +11,6 @@ from detector import (
 )
 from datetime import datetime
 
-# Set up the page
-st.set_page_config(page_title="AI Phishing Detector", layout="centered")
-st.title("🛡️ AI-Powered Phishing Email Detector")
-
-st.markdown("""
-Upload an email file or paste the email content below. This tool will analyze the message for phishing keywords,
-psychological manipulation, suspicious links, and provide ML-based prediction confidence.
-""")
-
 # Google Drive model URL
 model_url = 'https://drive.google.com/uc?export=download&id=16Cffka8o8-JprSNX4vf40d5u9IXAtIpQ'
 model_path = 'ml_model/phishing_model.pkl'
@@ -40,6 +31,15 @@ if not os.path.exists(model_path):
 # Load the ML model
 import joblib
 model = joblib.load(model_path)
+
+# Set up the page
+st.set_page_config(page_title="AI Phishing Detector", layout="centered")
+st.title("🛡️ AI-Powered Phishing Email Detector")
+
+st.markdown("""
+Upload an email file or paste the email content below. This tool will analyze the message for phishing keywords,
+psychological manipulation, suspicious links, and provide ML-based prediction confidence.
+""")
 
 # Main UI
 verbose = st.checkbox("🔍 Verbose Output (Logs)")
