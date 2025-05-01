@@ -1,6 +1,9 @@
 import streamlit as st
 import os
 import requests
+from datetime import datetime  # Fix the placement of this import
+
+# Import the necessary functions from detector
 from detector import (
     is_phishing,
     extract_text_from_file,
@@ -9,7 +12,6 @@ from detector import (
     extract_urls,
     ml_detect
 )
-from datetime import datetime  # Fix the placement of this import
 
 # Set up the page
 st.set_page_config(page_title="AI Phishing Detector", layout="centered")
