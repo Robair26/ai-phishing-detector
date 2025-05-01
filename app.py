@@ -1,15 +1,15 @@
 import streamlit as st
 import os
 import requests
-from detector import (
-    is_phishing,
-    extract_text_from_file,
-    translate_to_english,
-    log_detection_result,
-    extract_urls,
-    ml_detect
-)
-from datetime import datetime
+if __name__ == "__main__":
+    from detector import (
+        is_phishing,
+        extract_text_from_file,
+        translate_to_english,
+        log_detection_result,
+        extract_urls,
+        ml_detect
+    )from datetime import datetime
 
 # Google Drive model URL
 model_url = 'https://drive.google.com/uc?export=download&id=16Cffka8o8-JprSNX4vf40d5u9IXAtIpQ'
