@@ -3,18 +3,19 @@ from detector import (
     is_phishing,
     extract_text_from_file,
     translate_to_english,
+    log_detection_result,
     extract_urls,
-    check_links,
-    log_detection_result
+    ml_detect
 )
 import os
+from datetime import datetime
 
 st.set_page_config(page_title="AI Phishing Detector", layout="centered")
 st.title("🛡️ AI-Powered Phishing Email Detector")
 
 st.markdown("""
 Upload an email file or paste the email content below. This tool will analyze the message for phishing keywords,
-psychological manipulation, and suspicious links.
+psychological manipulation, suspicious links, and provide ML-based prediction confidence.
 """)
 
 verbose = st.checkbox("🔍 Verbose Output (Logs)")
@@ -43,7 +44,17 @@ if st.button("🚀 Analyze Email"):
     if verbose and translated != content:
         st.info("🌍 Translated to English:\n" + translated)
 
-    detected, score = is_phishing(translated)
+    detected, score, confidence, reasons = is_phishing(translated)
+    st.markdown(f"**🧠 Rule-Based Confidence:** {confidence}%")
+
+    ml_result, ml_conf = ml_detect(translated)
+    st.markdown(f"**🤖 ML Prediction:** {'PHISHING' if ml_result else 'SAFE'}")
+    st.markdown(f"**🤖 ML Confidence:** {ml_conf}%")
+
+    if verbose:
+        st.write("🧠 Rule-Based Reasoning:")
+        for reason in reasons:
+            st.markdown(f"- {reason}")
 
     urls = extract_urls(translated)
     if urls:
@@ -53,9 +64,29 @@ if st.button("🚀 Analyze Email"):
         if verbose:
             st.info(f"Scanned {len(urls)} URL(s).")
 
-    if detected:
-        st.error(f"⚠️ This email is likely a PHISHING attempt. Threat Score: {score}/10")
+    if detected or ml_result:
+        st.error(f"⚠️ This email is likely a PHISHING attempt. Rule Score: {score}/10")
     else:
         st.success("✅ This email appears safe.")
 
     log_detection_result(translated, detected)
+
+    # -------------------- Phase 1: Feedback Button --------------------
+    st.markdown("### 🤔 Was this detection accurate?")
+    col1, col2 = st.columns(2)
+    if not os.path.exists("feedback_log.txt"):
+        open("feedback_log.txt", "w").close()
+
+    with col1:
+        if st.button("👍 Yes, this was correct"):
+            with open("feedback_log.txt", "a", encoding="utf-8") as fb:
+                fb.write(f"[{datetime.now()}] ✅ Correct — {'PHISHING' if detected or ml_result else 'SAFE'}\n")
+                fb.write(f"{translated}\n{'-'*60}\n")
+            st.success("Thanks for your feedback!")
+
+    with col2:
+        if st.button("👎 No, this was wrong"):
+            with open("feedback_log.txt", "a", encoding="utf-8") as fb:
+                fb.write(f"[{datetime.now()}] ❌ Wrong — {'PHISHING' if detected or ml_result else 'SAFE'}\n")
+                fb.write(f"{translated}\n{'-'*60}\n")
+            st.warning("Feedback noted. We’ll use this to improve!")

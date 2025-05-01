@@ -5,7 +5,8 @@ from detector import (
     extract_text_from_file,
     translate_to_english,
     extract_urls,
-    log_detection_result
+    log_detection_result,
+    ml_detect  # Importing ML detection function
 )
 
 # Logging setup (for terminal output)
@@ -31,13 +32,48 @@ else:
     email_content = input("\n📩 Enter the email content to analyze:\n> ")
 
 # Process the email
-is_phish = is_phishing(email_content)
+translated_content = translate_to_english(email_content)
 
-# Log result
-log_detection_result(email_content, is_phish)
+# Rule-based detection
+rule_result, score, confidence, reasons = is_phishing(translated_content)
 
-# Show result
-if is_phish:
-    print("\n⚠️ This email is likely a PHISHING attempt.")
+# ML-based detection
+ml_result, ml_confidence = ml_detect(translated_content)
+
+# Log results
+log_detection_result(translated_content, rule_result)
+
+# Show results
+print("\n🧠 **Rule-Based Detection:**")
+if rule_result:
+    print(f"⚠️ This email is likely a PHISHING attempt based on rule-based analysis.")
+    print(f"   Threat Score: {score}/10, Confidence: {confidence}%")
+else:
+    print(f"✅ This email appears safe based on rule-based analysis.")
+
+print("\n🤖 **ML-Based Detection:**")
+if ml_result:
+    print(f"⚠️ ML-based prediction: This email is PHISHING.")
+    print(f"   Confidence: {ml_confidence}%")
+else:
+    print(f"✅ ML-based prediction: This email appears SAFE.")
+    
+# Show reasoning for rule-based detection
+print("\n🧠 **Rule-Based Reasoning:**")
+for reason in reasons:
+    print(f"- {reason}")
+
+# Show URLs found in the email
+urls = extract_urls(translated_content)
+if urls:
+    print("\n🔗 **URLs Found:**")
+    for url in urls:
+        print(f"- {url}")
+else:
+    print("\n✅ No URLs found in the email.")
+
+# Final message based on the results
+if rule_result or ml_result:
+    print("\n⚠️ **ALERT:** This email is likely a phishing attempt.")
 else:
     print("\n✅ This email appears safe.")

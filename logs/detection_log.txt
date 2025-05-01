@@ -1,0 +1,618 @@
+[2025-04-06 21:06:36] - Console Input ➜ PHISHING
+URGENT: Your account has been suspended. Click here to verify: http://bit.ly/secure-login
+
+Failure to act may result in account deactivation.
+
+----------------------------------------
+[2025-04-06 21:13:52] - Console Input ➜ PHISHING
+URGENT: Your account has been suspended. Click here to verify: http://bit.ly/secure-login
+
+Failure to act may result in account deactivation.
+
+----------------------------------------
+[2025-04-06 21:14:01] - Console Input ➜ PHISHING
+Hi John,
+
+Just wanted to follow up on the project timeline. Let me know if you need any help.
+
+Best,  
+Alex
+
+----------------------------------------
+[2025-04-16 18:47:09] - Console Input ➜ PHISHING
+From: support@secure-paypal.com
+Subject: Immediate Action Required: Account Suspension Notice
+
+Dear User,
+
+We noticed unusual activity on your PayPal account. For your protection, we have temporarily suspended access. Please verify your identity by clicking the secure link below:
+
+https://secure-paypal-login-support.com/verify
+
+Failure to act within 24 hours will result in permanent suspension of your account.
+
+Thank you for your immediate attention.
+
+Sincerely,  
+PayPal Security Team
+
+------------------------------------------------------------
+[2025-04-16 18:49:23] - Console Input ➜ PHISHING
+From: noreply@appleid-lock.com
+Subject: Your Apple ID has been locked for security reasons
+
+Dear Customer,
+
+We've detected suspicious activity on your Apple ID. For your protection, your account has been temporarily locked.
+
+Please verify your identity by logging in here:
+https://appleid-verify-reset.com/login
+
+Failure to act within 24 hours will result in permanent deactivation of your account.
+
+Sincerely,  
+Apple Security Team
+
+------------------------------------------------------------
+[2025-04-16 18:49:37] - Console Input ➜ PHISHING
+From: jobs-noreply@linkedin.com
+Subject: Robair, 10 new jobs match your profile this week
+
+Hi Robair,
+
+Based on your recent searches, we found 10 new jobs that might interest you. Click below to explore them:
+
+https://www.linkedin.com/jobs/search/
+
+Thanks for using LinkedIn!
+
+The LinkedIn Team
+
+------------------------------------------------------------
+[2025-04-16 18:49:56] - Console Input ➜ PHISHING
+From: hr-department@dhs-support.org
+Subject: Mandatory Policy Update – Action Required Today
+
+Hi Robair,
+
+We’re updating our company policy system. Please sign the document linked below to acknowledge your agreement.
+
+https://dhs-policy-docs-update.com/sign-now
+
+Your response is required by end of day.
+
+HR Compliance
+
+------------------------------------------------------------
+[2025-04-16 18:50:20] - Console Input ➜ PHISHING
+From: jobs-noreply@linkedin.com
+Subject: Robair, 10 new jobs match your profile this week
+
+Hi Robair,
+
+Based on your recent searches, we found 10 new jobs that might interest you. Click below to explore them:
+
+https://www.linkedin.com/jobs/search/
+
+Thanks for using LinkedIn!
+
+The LinkedIn Team
+
+------------------------------------------------------------
+[2025-04-16 18:50:42] - Console Input ➜ PHISHING
+From: noreply@appleid-lock.com
+Subject: Your Apple ID has been locked for security reasons
+
+Dear Customer,
+
+We've detected suspicious activity on your Apple ID. For your protection, your account has been temporarily locked.
+
+Please verify your identity by logging in here:
+https://appleid-verify-reset.com/login
+
+Failure to act within 24 hours will result in permanent deactivation of your account.
+
+Sincerely,  
+Apple Security Team
+
+------------------------------------------------------------
+[2025-04-16 18:55:32] - Console Input ➜ PHISHING
+From: order-update@amazon.com
+Subject: Your Amazon order has shipped!
+
+Hi Robair,
+
+Your recent order #123-4567890-1234567 has been shipped and is on its way. You can track your package using the link below:
+
+https://www.amazon.com/track-order
+
+Thank you for shopping with Amazon!
+
+------------------------------------------------------------
+[2025-04-16 18:57:11] - Console Input ➜ SAFE
+From: no-reply@youtube.com
+Subject: Your video has been approved for monetization
+
+Hi Robair,
+
+Good news! Your recent video submission is now eligible for monetization. You can view your earnings dashboard here:
+
+https://www.youtube.com/creator-dashboard
+
+Thanks for being a creator!
+
+The YouTube Team
+
+------------------------------------------------------------
+[2025-04-16 18:57:31] - Console Input ➜ PHISHING
+From: alert@goog1e-security.com
+Subject: Suspicious Login Attempt Detected
+
+Dear User,
+
+We've detected a suspicious login attempt from a new device.
+
+To protect your account, please confirm your identity at:
+https://goog1e-security.com/verify-now
+
+This is a critical security alert. Act fast to avoid account lock.
+
+Google Security Team
+
+------------------------------------------------------------
+[2025-04-16 18:57:48] - Console Input ➜ PHISHING
+From: hr-update@dhs-policy-secure123.com
+Subject: Action Required: New Policy Update
+
+Hi Robair,
+
+Due to recent compliance changes, we need your immediate signature on the new policy document.
+
+Please sign here:
+https://dhs-policy-secure123.com/doc-sign
+
+This must be completed by today to avoid disruption in system access.
+
+HR Department
+
+------------------------------------------------------------
+[2025-04-16 19:37:26] - Console Input ➜ PHISHING
+From: alert@goog1e-security.com
+Subject: Suspicious Login Attempt Detected
+
+Dear User,
+
+We've detected a suspicious login attempt from a new device.
+
+To protect your account, please confirm your identity at:
+https://goog1e-security.com/verify-now
+
+This is a critical security alert. Act fast to avoid account lock.
+
+Google Security Team
+
+------------------------------------------------------------
+[2025-04-16 19:37:42] - Console Input ➜ SAFE
+From: order-update@amazon.com
+Subject: Your Amazon order has shipped!
+
+Hi Robair,
+
+Your recent order #123-4567890-1234567 has been shipped and is on its way. You can track your package using the link below:
+
+https://www.amazon.com/track-order
+
+Thank you for shopping with Amazon!
+
+------------------------------------------------------------
+[2025-04-16 19:38:12] - Console Input ➜ SAFE
+From: order-update@amazon.com
+Subject: Your Amazon order has shipped!
+
+Hi Robair,
+
+Your recent order #123-4567890-1234567 has been shipped and is on its way. You can track your package using the link below:
+
+https://www.amazon.com/track-order
+
+Thank you for shopping with Amazon!
+
+------------------------------------------------------------
+[2025-04-16 19:38:31] - Console Input ➜ SAFE
+From: no-reply@youtube.com
+Subject: Your video has been approved for monetization
+
+Hi Robair,
+
+Good news! Your recent video submission is now eligible for monetization. You can view your earnings dashboard here:
+
+https://www.youtube.com/creator-dashboard
+
+Thanks for being a creator!
+
+The YouTube Team
+
+------------------------------------------------------------
+[2025-04-16 19:38:48] - Console Input ➜ PHISHING
+From: alert@goog1e-security.com
+Subject: Suspicious Login Attempt Detected
+
+Dear User,
+
+We've detected a suspicious login attempt from a new device.
+
+To protect your account, please confirm your identity at:
+https://goog1e-security.com/verify-now
+
+This is a critical security alert. Act fast to avoid account lock.
+
+Google Security Team
+
+------------------------------------------------------------
+[2025-04-16 19:39:06] - Console Input ➜ PHISHING
+From: hr-update@dhs-policy-secure123.com
+Subject: Action Required: New Policy Update
+
+Hi Robair,
+
+Due to recent compliance changes, we need your immediate signature on the new policy document.
+
+Please sign here:
+https://dhs-policy-secure123.com/doc-sign
+
+This must be completed by today to avoid disruption in system access.
+
+HR Department
+
+------------------------------------------------------------
+[2025-04-16 19:45:15] - Console Input ➜ SAFE
+From: order-update@amazon.com
+Subject: Your Amazon order has shipped!
+
+Hi Robair,
+
+Your recent order #123-4567890-1234567 has been shipped and is on its way. You can track your package using the link below:
+
+https://www.amazon.com/track-order
+
+Thank you for shopping with Amazon!
+
+------------------------------------------------------------
+[2025-04-16 19:45:32] - Console Input ➜ SAFE
+From: no-reply@youtube.com
+Subject: Your video has been approved for monetization
+
+Hi Robair,
+
+Good news! Your recent video submission is now eligible for monetization. You can view your earnings dashboard here:
+
+https://www.youtube.com/creator-dashboard
+
+Thanks for being a creator!
+
+The YouTube Team
+
+------------------------------------------------------------
+[2025-04-16 19:45:55] - Console Input ➜ PHISHING
+From: alert@goog1e-security.com
+Subject: Suspicious Login Attempt Detected
+
+Dear User,
+
+We've detected a suspicious login attempt from a new device.
+
+To protect your account, please confirm your identity at:
+https://goog1e-security.com/verify-now
+
+This is a critical security alert. Act fast to avoid account lock.
+
+Google Security Team
+
+------------------------------------------------------------
+[2025-04-16 19:46:13] - Console Input ➜ PHISHING
+From: hr-update@dhs-policy-secure123.com
+Subject: Action Required: New Policy Update
+
+Hi Robair,
+
+Due to recent compliance changes, we need your immediate signature on the new policy document.
+
+Please sign here:
+https://dhs-policy-secure123.com/doc-sign
+
+This must be completed by today to avoid disruption in system access.
+
+HR Department
+
+------------------------------------------------------------
+[2025-04-16 19:52:01] - Console Input ➜ PHISHING
+From: hr-update@dhs-policy-secure123.com
+Subject: Action Required: New Policy Update
+
+Hi Robair,
+
+Due to recent compliance changes, we need your immediate signature on the new policy document.
+
+Please sign here:
+https://dhs-policy-secure123.com/doc-sign
+
+This must be completed by today to avoid disruption in system access.
+
+HR Department
+
+------------------------------------------------------------
+[2025-04-16 20:25:48] - Console Input ➜ PHISHING
+From: alert@goog1e-security.com
+Subject: Suspicious Login Attempt Detected
+
+Dear User,
+
+We've detected a suspicious login attempt from a new device.
+
+To protect your account, please confirm your identity at:
+https://goog1e-security.com/verify-now
+
+This is a critical security alert. Act fast to avoid account lock.
+
+Google Security Team
+
+------------------------------------------------------------
+[2025-04-16 20:27:04] - Console Input ➜ PHISHING
+From: Apple ID Support <no-reply@appleid-reset-alert.com>
+Subject: [Action Required] Your Apple ID Has Been Locked
+
+Dear Customer,
+
+We've detected suspicious activity on your Apple ID and, for your protection, access has been temporarily suspended. Please confirm your identity by signing in below:
+
+👉 https://appleid-verify-account.com/security
+
+If we do not receive a response within 24 hours, your account will be permanently deactivated.
+
+Thank you for choosing Apple.
+
+Apple Security Team
+
+------------------------------------------------------------
+[2025-04-16 20:56:29] - Console Input ➜ PHISHING
+Hey Robair,
+
+Hope everything’s been going well with you! Just wanted to check in — it’s been a while since we last talked. I’ve been meaning to share some project ideas I think you’d love, especially since you’ve been diving into AI and cybersecurity lately.
+
+Let me know when you’re free to hop on a quick call or grab coffee. I’ll be around this week.
+
+Talk soon,  
+Mike
+
+------------------------------------------------------------
+[2025-04-20 19:47:09] - Console Input ➜ SAFE
+From: John Doe <john.doe@example.com>
+
+Hello Robair,
+
+Just wanted to remind you about the team meeting tomorrow at 10 AM. We’ll
+be discussing the upcoming project milestones and deadlines.
+
+Looking forward to seeing you there!
+
+Best regards,
+John
+
+------------------------------------------------------------
+[2025-04-20 19:49:25] - Console Input ➜ PHISHING
+From: Google <no-reply@google.com>
+
+Dear User,
+
+We noticed suspicious activity on your account. For your protection, we
+have temporarily suspended your access. Please verify your identity by
+clicking on the link below:
+
+👉 https://accounts.google.com/verify
+
+Failure to act within 24 hours will result in permanent suspension of your
+account.
+
+Thank you for your immediate attention.
+
+Google Support Team
+
+------------------------------------------------------------
+[2025-04-20 20:00:54] - Console Input ➜ PHISHING
+From: Google <no-reply@google.com>
+
+Dear User,
+
+We noticed suspicious activity on your account. For your protection, we
+have temporarily suspended your access. Please verify your identity by
+clicking on the link below:
+
+👉 https://accounts.google.com/verify
+
+Failure to act within 24 hours will result in permanent suspension of your
+account.
+
+Thank you for your immediate attention.
+
+Google Support Team
+
+------------------------------------------------------------
+[2025-04-20 20:08:03] - Console Input ➜ SAFE
+From: John Doe <john.doe@example.com>
+
+Hello Robair,
+
+Just wanted to remind you about the team meeting tomorrow at 10 AM. We’ll
+be discussing the upcoming project milestones and deadlines.
+
+Looking forward to seeing you there!
+
+Best regards,
+John
+
+------------------------------------------------------------
+[2025-04-20 20:14:40] - Console Input ➜ PHISHING
+From: Google <no-reply@google.com>
+
+Dear User,
+
+We noticed suspicious activity on your account. For your protection, we
+have temporarily suspended your access. Please verify your identity by
+clicking on the link below:
+
+👉 https://accounts.google.com/verify
+
+Failure to act within 24 hours will result in permanent suspension of your
+account.
+
+Thank you for your immediate attention.
+
+Google Support Team
+
+------------------------------------------------------------
+[2025-04-20 20:16:12] - Console Input ➜ SAFE
+From: John Doe <john.doe@example.com>
+
+Hello Robair,
+
+Just wanted to remind you about the team meeting tomorrow at 10 AM. We’ll
+be discussing the upcoming project milestones and deadlines.
+
+Looking forward to seeing you there!
+
+Best regards,
+John
+
+------------------------------------------------------------
+[2025-04-20 20:30:47] - Console Input ➜ PHISHING
+From: Google <no-reply@google.com>
+
+Dear User,
+
+We noticed suspicious activity on your account. For your protection, we
+have temporarily suspended your access. Please verify your identity by
+clicking on the link below:
+
+👉 https://accounts.google.com/verify
+
+Failure to act within 24 hours will result in permanent suspension of your
+account.
+
+Thank you for your immediate attention.
+
+Google Support Team
+
+------------------------------------------------------------
+[2025-04-20 20:43:11] - Console Input ➜ SAFE
+From: John Doe <john.doe@example.com>
+
+Hello Robair,
+
+Just wanted to remind you about the team meeting tomorrow at 10 AM. We’ll
+be discussing the upcoming project milestones and deadlines.
+
+Looking forward to seeing you there!
+
+Best regards,
+John
+
+------------------------------------------------------------
+[2025-04-20 20:45:48] - Console Input ➜ PHISHING
+From: Google <no-reply@google.com>
+
+Dear User,
+
+We noticed suspicious activity on your account. For your protection, we
+have temporarily suspended your access. Please verify your identity by
+clicking on the link below:
+
+👉 https://accounts.google.com/verify
+
+Failure to act within 24 hours will result in permanent suspension of your
+account.
+
+Thank you for your immediate attention.
+
+Google Support Team
+
+------------------------------------------------------------
+[2025-04-20 20:47:45] - Console Input ➜ SAFE
+From: John Doe <john.doe@example.com>
+
+Hello Robair,
+
+Just wanted to remind you about the team meeting tomorrow at 10 AM. We’ll
+be discussing the upcoming project milestones and deadlines.
+
+Looking forward to seeing you there!
+
+Best regards,
+John
+
+------------------------------------------------------------
+[2025-04-20 20:49:05] - Console Input ➜ SAFE
+From: John Doe <john.doe@example.com>
+
+Hello Robair,
+
+Just wanted to remind you about the team meeting tomorrow at 10 AM. We’ll
+be discussing the upcoming project milestones and deadlines.
+
+Looking forward to seeing you there!
+
+Best regards,
+John
+
+------------------------------------------------------------
+[2025-04-20 21:02:00] - Console Input ➜ PHISHING
+From: Google <no-reply@google.com>
+
+Dear User,
+
+We noticed suspicious activity on your account. For your protection, we
+have temporarily suspended your access. Please verify your identity by
+clicking on the link below:
+
+👉 https://accounts.google.com/verify
+
+Failure to act within 24 hours will result in permanent suspension of your
+account.
+
+Thank you for your immediate attention.
+
+Google Support Team
+
+------------------------------------------------------------
+[2025-04-30 18:43:55] - Console Input ➜ SAFE
+From: John Doe <john.doe@example.com>
+
+Hello Robair,
+
+Just wanted to remind you about the team meeting tomorrow at 10 AM. We’ll
+be discussing the upcoming project milestones and deadlines.
+
+Looking forward to seeing you there!
+
+Best regards,
+John
+
+------------------------------------------------------------
+[2025-04-30 19:22:30] - Console Input ➜ PHISHING
+From: Google <no-reply@google.com>
+
+Dear User,
+
+We noticed suspicious activity on your account. For your protection, we
+have temporarily suspended your access. Please verify your identity by
+clicking on the link below:
+
+👉 https://accounts.google.com/verify
+
+Failure to act within 24 hours will result in permanent suspension of your
+account.
+
+Thank you for your immediate attention.
+
+Google Support Team
+
+------------------------------------------------------------

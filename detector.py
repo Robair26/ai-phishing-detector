@@ -1,170 +1,184 @@
+import os
 import re
 import logging
-import fitz  # PyMuPDF for PDF parsing
-import extract_msg  # For .msg files
 from langdetect import detect
 from deep_translator import GoogleTranslator
-from link_scanner import check_links
 from textblob import TextBlob
 import nltk
-import os
+import joblib
 from datetime import datetime
+from urllib.parse import urlparse
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 
-# Logging setup
+# -------------------- Trusted Domains --------------------
+TRUSTED_DOMAINS = [
+    "linkedin.com", "google.com", "microsoft.com", "apple.com", "amazon.com",
+    "paypal.com", "github.com", "irs.gov", "usps.com", "youtube.com"
+]
+
+# -------------------- Keywords --------------------
+PHISHING_KEYWORDS = [
+    "verify", "account", "password", "login", "click here",
+    "suspended", "update", "confirm", "urgent", "security alert",
+    "reset your password", "bank", "limited time", "verify identity",
+    "suspicious activity", "verify your identity", "failure to act",
+    "account locked", "click to claim", "click to update"
+]
+
+SOCIAL_ENGINEERING_PHRASES = [
+    "can you do me a favor", "urgent but quick", "you’ve been selected",
+    "only one who can help", "quick task for you", "talk soon",
+    "grab coffee", "hop on a quick call", "need your input asap",
+    "immediate action required", "please respond immediately", "time-sensitive",
+    "your immediate attention required", "act now"
+]
+
+OBFUSCATION_PATTERNS = [
+    r"\bc[1l]ick(?!\s+below)", r"\bacc0unt\b", r"\bl[o0]gin\b", r"\bp[a@]ssword\b", r"\bver[i1]fy\b",
+    r"\b[0o]pen\s+[cC]lick\b", r"\b[a1]ctivate\s+your\s+account\b", r"\b[1l]ogin\b", r"\b[0o]pen\b",
+    r"\b[a@]ccount\b", r"\b[0o]ffer\b"
+]
+
+# -------------------- Logger --------------------
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
     level=logging.INFO
 )
 
-# Keyword list for phishing detection
-PHISHING_KEYWORDS = [
-    "verify", "account", "password", "login", "click here",
-    "suspended", "update", "confirm", "urgent", "security alert",
-    "reset your password", "bank", "limited time", "verify identity"
-]
+# -------------------- ML-Based Detector --------------------
+model = joblib.load("ml_model/phishing_model.pkl")
 
-SUSPICIOUS_URL_KEYWORDS = [
-    "login", "verify", "update", "secure", "account", "confirm", "password", "bank", "paypal"
-]
-
-URL_SHORTENERS = [
-    "bit.ly", "tinyurl", "t.co", "goo.gl", "ow.ly", "buff.ly", "rebrand.ly"
-]
-
-# Social engineering phrases
-SOCIAL_ENGINEERING_PHRASES = [
-    "just wanted to check in", "can you do me a favor", "urgent but quick",
-    "no need to worry", "you’ll love this opportunity", "you’ve been selected",
-    "this stays between us", "I just need one thing from you", "you’re the only one who can help",
-    "quick task for you", "need your input asap", "we're counting on you", "talk soon", "grab coffee",
-    "hop on a quick call"
-]
-
-def is_phishing(content):
-    logging.info("Received email content.")
-
-    # Language Detection + Translation
-    content = translate_to_english(content)
-
-    detected = False
-    threat_score = 0
-    lower_content = content.lower()
-
-    # Check for phishing keywords
-    for keyword in PHISHING_KEYWORDS:
-        if keyword in lower_content:
-            logging.info(f"⚠️  Keyword matched: {keyword}")
-            threat_score += 2
-            detected = True
-
-    # Check for social engineering phrases
-    for phrase in SOCIAL_ENGINEERING_PHRASES:
-        if phrase in lower_content:
-            logging.info(f"🧠 Social engineering cue detected: {phrase}")
-            threat_score += 2
-            detected = True
-
-    # Tone scoring
+def ml_detect(content):
     try:
-        sentiment = TextBlob(content).sentiment.polarity
-        logging.info(f"🧠 Sentiment polarity: {sentiment:.2f}")
-        if sentiment < -0.3:
+        prediction = model.predict([content])[0]
+        probability = model.predict_proba([content])[0][1]
+        return int(prediction), round(probability * 100, 2)
+    except Exception as e:
+        logging.error(f"ML detection failed: {e}")
+        return 0, 0.0
+
+# -------------------- Rule-Based Detector --------------------
+def is_phishing(content):
+    logging.info("Scanning email content...")
+    content = translate_to_english(content)
+    threat_score = 0
+    reasons = []
+    detected = False
+    lower = content.lower()
+
+    for kw in PHISHING_KEYWORDS:
+        if kw in lower:
+            weight = 2 if kw in ["verify", "login", "password", "reset your password"] else 1
+            reasons.append(f"Keyword matched: '{kw}' (weight={weight})")
+            threat_score += weight
+            detected = True
+
+    for phrase in SOCIAL_ENGINEERING_PHRASES:
+        if phrase in lower:
+            reasons.append(f"Social engineering phrase: '{phrase}'")
+            threat_score += 2
+            detected = True
+
+    for pattern in OBFUSCATION_PATTERNS:
+        if re.search(pattern, lower):
+            reasons.append(f"Obfuscation pattern: '{pattern}'")
+            threat_score += 2
+            detected = True
+
+    try:
+        polarity = TextBlob(content).sentiment.polarity
+        if polarity < -0.3:
+            reasons.append(f"Negative tone (polarity={polarity:.2f})")
             threat_score += 1
             detected = True
     except Exception as e:
         logging.warning(f"Sentiment analysis failed: {e}")
 
-    # POS pattern matching
     try:
-        sentences = nltk.sent_tokenize(content)
-        for sentence in sentences:
+        for sentence in nltk.sent_tokenize(content):
             words = nltk.word_tokenize(sentence)
             tags = nltk.pos_tag(words)
             if tags and tags[0][1].startswith("VB"):
-                logging.info(f"🧠 POS pattern detected (starts with verb): {sentence}")
+                reasons.append(f"Sentence starts with verb: '{sentence[:40]}...'")
                 threat_score += 1
                 detected = True
     except Exception as e:
         logging.warning(f"POS tagging failed: {e}")
 
-    # URL scanning
     urls = extract_urls(content)
-    if urls:
-        logging.info(f"🔍 Found {len(urls)} URL(s). Scanning...")
-        scan_results = check_links(urls)
-        for url, status in scan_results.items():
-            logging.info(f"🔗 {url} — {status}")
-            if status == "🚨 Unsafe":
-                threat_score += 3
-                detected = True
+    for url in urls:
+        domain = urlparse(url).netloc
+        if any(domain.endswith(t) for t in TRUSTED_DOMAINS):
+            reasons.append(f"✅ Trusted domain detected: {domain}")
+            threat_score -= 3
+        else:
+            reasons.append(f"❌ Unrecognized domain: {domain}")
+            threat_score += 2
+            detected = True
+
+        if len(domain.split(".")) < 2 or any(char.isdigit() for char in domain.split(".")[0]):
+            reasons.append(f"❗ Suspicious domain format: {domain}")
+            threat_score += 2
+            detected = True
+
+    threat_score = max(0, min(threat_score, 10))
+    confidence = int((threat_score / 10) * 100)
+
+    if confidence >= 80:
+        reasons.append("🚨 High confidence due to multiple strong signals.")
+    elif confidence >= 50:
+        reasons.append("⚠️ Medium confidence — some red flags present.")
     else:
-        logging.info("✅ No links found in the email.")
+        reasons.append("ℹ️ Low confidence — mild or uncertain indicators.")
 
-    return detected, min(threat_score, 10)  # Cap the score at 10
+    if confidence < 50:  # ✅ Updated threshold
+        detected = False
 
+    return detected, threat_score, confidence, reasons
+
+# -------------------- Helpers --------------------
 def extract_urls(text):
-    return re.findall(r"https?://[^\s]+", text.lower())
-
-def extract_text_from_txt(file_path):
-    with open(file_path, "r", encoding="utf-8", errors="ignore") as file:
-        return file.read()
-
-def extract_text_from_eml(file_path):
-    with open(file_path, "r", encoding="utf-8", errors="ignore") as file:
-        return file.read()
-
-def extract_text_from_msg(file_path):
-    try:
-        msg = extract_msg.Message(file_path)
-        return msg.body
-    except Exception as e:
-        logging.error(f"Failed to extract .msg: {e}")
-        return ""
-
-def extract_text_from_pdf(file_path):
-    try:
-        text = ""
-        with fitz.open(file_path) as doc:
-            for page in doc:
-                text += page.get_text()
-        return text
-    except Exception as e:
-        logging.error(f"Failed to extract .pdf: {e}")
-        return ""
-
-def extract_text_from_file(file_path):
-    if file_path.endswith(".txt"):
-        return extract_text_from_txt(file_path)
-    elif file_path.endswith(".eml"):
-        return extract_text_from_eml(file_path)
-    elif file_path.endswith(".msg"):
-        return extract_text_from_msg(file_path)
-    elif file_path.endswith(".pdf"):
-        return extract_text_from_pdf(file_path)
-    else:
-        raise ValueError("Unsupported file format")
+    return re.findall(r'https?://\S+', text)
 
 def translate_to_english(text):
     try:
-        detected_lang = detect(text)
-        logging.info(f"🌐 Detected language: {detected_lang}")
-        if detected_lang != "en":
-            translated = GoogleTranslator(source=detected_lang, target="en").translate(text)
-            logging.info("🌍 Translated email content to English for analysis.")
-            return translated
-        return text
+        lang = detect(text)
+        if lang != "en":
+            return GoogleTranslator(source=lang, target="en").translate(text)
     except Exception as e:
-        logging.error(f"Translation failed: {e}")
-        return text
+        logging.warning(f"Translation failed: {e}")
+    return text
+
+def extract_text_from_file(file_path):
+    if file_path.endswith(".txt") or file_path.endswith(".eml"):
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            return f.read()
+    elif file_path.endswith(".msg"):
+        try:
+            msg = extract_msg.Message(file_path)
+            return msg.body
+        except Exception as e:
+            logging.warning(f"MSG extract failed: {e}")
+            return ""
+    elif file_path.endswith(".pdf"):
+        try:
+            text = ""
+            with fitz.open(file_path) as doc:
+                for page in doc:
+                    text += page.get_text()
+            return text
+        except Exception as e:
+            logging.warning(f"PDF extract failed: {e}")
+            return ""
+    else:
+        raise ValueError("Unsupported file type")
 
 def log_detection_result(content, is_phish, file_name=None):
     os.makedirs("logs", exist_ok=True)
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     label = "PHISHING" if is_phish else "SAFE"
-    fname = f"logs/detection_log.txt"
-    with open(fname, "a", encoding="utf-8") as f:
-        f.write(f"[{timestamp}] - {file_name or 'Console Input'} ➜ {label}\n")
-        f.write(f"{content}\n{'-'*40}\n")
+    with open("logs/detection_log.txt", "a", encoding="utf-8") as f:
+        f.write(f"[{ts}] - {file_name or 'Console Input'} ➜ {label}\n")
+        f.write(f"{content}\n{'-'*60}\n")
