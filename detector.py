@@ -1,7 +1,7 @@
 import os
 import re
 import logging
-import requests  # ✅ ← This is the fix
+import requests
 from langdetect import detect
 from deep_translator import GoogleTranslator
 from textblob import TextBlob
@@ -10,6 +10,7 @@ import joblib
 from datetime import datetime
 from urllib.parse import urlparse
 
+# NLTK setup (downloads once)
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 
@@ -21,42 +22,36 @@ TRUSTED_DOMAINS = [
 
 # -------------------- Keywords --------------------
 PHISHING_KEYWORDS = [
-    "verify", "account", "password", "login", "click here",
-    "suspended", "update", "confirm", "urgent", "security alert",
-    "reset your password", "bank", "limited time", "verify identity",
-    "suspicious activity", "verify your identity", "failure to act",
+    "verify", "account", "password", "login", "click here", "suspended", "update",
+    "confirm", "urgent", "security alert", "reset your password", "bank", "limited time",
+    "verify identity", "suspicious activity", "verify your identity", "failure to act",
     "account locked", "click to claim", "click to update"
 ]
 
 SOCIAL_ENGINEERING_PHRASES = [
     "can you do me a favor", "urgent but quick", "you’ve been selected",
-    "only one who can help", "quick task for you", "talk soon",
-    "grab coffee", "hop on a quick call", "need your input asap",
-    "immediate action required", "please respond immediately", "time-sensitive",
-    "your immediate attention required", "act now"
+    "only one who can help", "quick task for you", "talk soon", "grab coffee",
+    "hop on a quick call", "need your input asap", "immediate action required",
+    "please respond immediately", "time-sensitive", "your immediate attention required", "act now"
 ]
 
 OBFUSCATION_PATTERNS = [
     r"\bc[1l]ick(?!\s+below)", r"\bacc0unt\b", r"\bl[o0]gin\b", r"\bp[a@]ssword\b", r"\bver[i1]fy\b",
-    r"\b[0o]pen\s+[cC]lick\b", r"\b[a1]ctivate\s+your\s+account\b", r"\b[1l]ogin\b", r"\b[0o]pen\b",
-    r"\b[a@]ccount\b", r"\b[0o]ffer\b"
+    r"\b[0o]pen\s+[cC]lick\b", r"\b[a1]ctivate\s+your\s+account\b", r"\b[1l]ogin\b",
+    r"\b[0o]pen\b", r"\b[a@]ccount\b", r"\b[0o]ffer\b"
 ]
 
 # -------------------- Logger --------------------
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    level=logging.INFO
-)
+logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 
-# -------------------- ML-Based Detector --------------------
+# -------------------- ML Model: Download & Load --------------------
 model_path = "ml_model/phishing_model.pkl"
 
-# Auto-download the model from Google Drive if it doesn't exist
 if not os.path.exists(model_path):
     os.makedirs("ml_model", exist_ok=True)
     print("🔽 Downloading phishing model...")
-    url = "https://drive.google.com/uc?export=download&id=16Cffka8o8-JprSNX4vf40d5u9IXAtIpQ"
     try:
+        url = "https://drive.google.com/uc?export=download&id=16Cffka8o8-JprSNX4vf40d5u9IXAtIpQ"
         r = requests.get(url)
         with open(model_path, "wb") as f:
             f.write(r.content)
@@ -64,11 +59,22 @@ if not os.path.exists(model_path):
     except Exception as e:
         raise FileNotFoundError(f"❌ Failed to download the model: {e}")
 
-# Load model
-model = joblib.load(model_path)
+try:
+    model = joblib.load(model_path)
+except Exception as e:
+    raise RuntimeError(f"❌ Failed to load the model: {e}")
 
+# -------------------- ML Detection --------------------
+def ml_detect(content):
+    try:
+        prediction = model.predict([content])[0]
+        probability = model.predict_proba([content])[0][1]
+        return int(prediction), round(probability * 100, 2)
+    except Exception as e:
+        logging.error(f"ML detection failed: {e}")
+        return 0, 0.0
 
-# -------------------- Rule-Based Detector --------------------
+# -------------------- Rule-Based Detection --------------------
 def is_phishing(content):
     logging.info("Scanning email content...")
     content = translate_to_english(content)
@@ -142,12 +148,12 @@ def is_phishing(content):
     else:
         reasons.append("ℹ️ Low confidence — mild or uncertain indicators.")
 
-    if confidence < 50:  # ✅ Updated threshold
+    if confidence < 50:
         detected = False
 
     return detected, threat_score, confidence, reasons
 
-# -------------------- Helpers --------------------
+# -------------------- Helper Functions --------------------
 def extract_urls(text):
     return re.findall(r'https?://\S+', text)
 
@@ -161,28 +167,26 @@ def translate_to_english(text):
     return text
 
 def extract_text_from_file(file_path):
-    if file_path.endswith(".txt") or file_path.endswith(".eml"):
-        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-            return f.read()
-    elif file_path.endswith(".msg"):
-        try:
+    try:
+        if file_path.endswith(".txt") or file_path.endswith(".eml"):
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                return f.read()
+        elif file_path.endswith(".msg"):
+            import extract_msg
             msg = extract_msg.Message(file_path)
             return msg.body
-        except Exception as e:
-            logging.warning(f"MSG extract failed: {e}")
-            return ""
-    elif file_path.endswith(".pdf"):
-        try:
+        elif file_path.endswith(".pdf"):
+            import fitz
             text = ""
             with fitz.open(file_path) as doc:
                 for page in doc:
                     text += page.get_text()
             return text
-        except Exception as e:
-            logging.warning(f"PDF extract failed: {e}")
-            return ""
-    else:
-        raise ValueError("Unsupported file type")
+        else:
+            raise ValueError("Unsupported file type")
+    except Exception as e:
+        logging.warning(f"File extraction failed: {e}")
+        return ""
 
 def log_detection_result(content, is_phish, file_name=None):
     os.makedirs("logs", exist_ok=True)
