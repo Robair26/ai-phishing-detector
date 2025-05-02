@@ -1,6 +1,5 @@
 import streamlit as st
 import os
-import requests
 from detector import (
     is_phishing,
     extract_text_from_file,
@@ -19,27 +18,6 @@ st.markdown("""
 Upload an email file or paste the email content below. This tool will analyze the message for phishing keywords,
 psychological manipulation, suspicious links, and provide ML-based prediction confidence.
 """)
-
-# Google Drive model URL
-model_url = 'https://drive.google.com/file/d/16Cffka8o8-JprSNX4vf40d5u9IXAtIpQ/view?usp=sharing'
-model_path = 'ml_model/phishing_model.pkl'
-
-# Function to download the model from Google Drive
-def download_model():
-    r = requests.get(model_url, stream=True)
-    with open(model_path, 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024):
-            if chunk:
-                f.write(chunk)
-    print("Model downloaded successfully!")
-
-# Download the model if not already present
-if not os.path.exists(model_path):
-    download_model()
-
-# Load the ML model
-import joblib
-model = joblib.load(model_path)
 
 # Main UI
 verbose = st.checkbox("🔍 Verbose Output (Logs)")

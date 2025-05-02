@@ -48,7 +48,12 @@ logging.basicConfig(
 )
 
 # -------------------- ML-Based Detector --------------------
-model = joblib.load("ml_model/phishing_model.pkl")
+model_path = "ml_model/phishing_model.pkl"
+
+if os.path.exists(model_path):
+    model = joblib.load(model_path)
+else:
+    raise FileNotFoundError(f"The model was not found at {model_path}. Make sure the file exists.")
 
 def ml_detect(content):
     try:
@@ -58,6 +63,7 @@ def ml_detect(content):
     except Exception as e:
         logging.error(f"ML detection failed: {e}")
         return 0, 0.0
+
 
 # -------------------- Rule-Based Detector --------------------
 def is_phishing(content):
