@@ -50,19 +50,21 @@ logging.basicConfig(
 # -------------------- ML-Based Detector --------------------
 model_path = "ml_model/phishing_model.pkl"
 
-if os.path.exists(model_path):
-    model = joblib.load(model_path)
-else:
-    raise FileNotFoundError(f"The model was not found at {model_path}. Make sure the file exists.")
-
-def ml_detect(content):
+# Auto-download the model from Google Drive if it doesn't exist
+if not os.path.exists(model_path):
+    os.makedirs("ml_model", exist_ok=True)
+    print("🔽 Downloading phishing model...")
+    url = "https://drive.google.com/uc?export=download&id=16Cffka8o8-JprSNX4vf40d5u9IXAtIpQ"
     try:
-        prediction = model.predict([content])[0]
-        probability = model.predict_proba([content])[0][1]
-        return int(prediction), round(probability * 100, 2)
+        r = requests.get(url)
+        with open(model_path, "wb") as f:
+            f.write(r.content)
+        print("✅ Model downloaded successfully.")
     except Exception as e:
-        logging.error(f"ML detection failed: {e}")
-        return 0, 0.0
+        raise FileNotFoundError(f"❌ Failed to download the model: {e}")
+
+# Load model
+model = joblib.load(model_path)
 
 
 # -------------------- Rule-Based Detector --------------------
