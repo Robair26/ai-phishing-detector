@@ -1,6 +1,6 @@
+import streamlit as st
 import os
 import requests
-import joblib
 from detector import (
     is_phishing,
     extract_text_from_file,
@@ -12,7 +12,6 @@ from detector import (
 from datetime import datetime
 
 # Set up the page
-import streamlit as st
 st.set_page_config(page_title="AI Phishing Detector", layout="centered")
 st.title("🛡️ AI-Powered Phishing Email Detector")
 
@@ -21,8 +20,8 @@ Upload an email file or paste the email content below. This tool will analyze th
 psychological manipulation, suspicious links, and provide ML-based prediction confidence.
 """)
 
-# Google Drive model URL (ensure your model is accessible here)
-model_url = 'https://drive.google.com/uc?export=download&id=16Cffka8o8-JprSNX4vf40d5u9IXAtIpQ'
+# Google Drive model URL
+model_url = 'https://drive.google.com/file/d/16Cffka8o8-JprSNX4vf40d5u9IXAtIpQ/view?usp=sharing'
 model_path = 'ml_model/phishing_model.pkl'
 
 # Function to download the model from Google Drive
@@ -34,17 +33,13 @@ def download_model():
                 f.write(chunk)
     print("Model downloaded successfully!")
 
-# Check if the model exists, if not download it
+# Download the model if not already present
 if not os.path.exists(model_path):
-    print("Model file not found! Downloading...")
     download_model()
 
-# Now load the ML model
-try:
-    model = joblib.load(model_path)
-    print("Model loaded successfully.")
-except Exception as e:
-    print(f"Error loading model: {e}")
+# Load the ML model
+import joblib
+model = joblib.load(model_path)
 
 # Main UI
 verbose = st.checkbox("🔍 Verbose Output (Logs)")
