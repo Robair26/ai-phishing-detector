@@ -8,3 +8,4 @@ dataset_bundle.zip
 "venv/" 
 "__pycache__/" 
 "ml_model/phishing_dataset.csv" 
+"venv/" 
