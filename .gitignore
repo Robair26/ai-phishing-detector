@@ -5,3 +5,6 @@ dataset_bundle.zip
 "dataset_bundle/" 
 "dataset_bundle/" 
 "dataset_bundle/" 
+"venv/" 
+"__pycache__/" 
+"ml_model/phishing_dataset.csv" 
