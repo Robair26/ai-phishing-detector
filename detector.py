@@ -1,6 +1,7 @@
 import os
 import re
 import logging
+import requests  # ✅ ← This is the fix
 from langdetect import detect
 from deep_translator import GoogleTranslator
 from textblob import TextBlob
